@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metas Financeiras | NexusInvest</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="/global.js"></script>
+
+   
+</head>
+
+<body class="layout-dashboard">
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-group">
+                    <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+                </div>
+                <button id="mobile-menu-btn" class="mobile-menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+			<nav class="menu">
+                <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+                <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+                <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+                <button class="active" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+                <button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+                <button class="btn-menu" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+            </nav>
+
+            <div class="menu-footer">
+                <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+                <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+            </div>
+
+            
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="header-welcome">
+                    <h2>Minhas Metas</h2>
+                    <span class="breadcrumbs">Home / Metas Financeiras</span>
+                </div>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-metas" placeholder="Pesquisar metas...">
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="name">Carregando...</span>
+                            <span class="role">...</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="metas-module">
+                <div class="container" style="padding: 0; margin: 0; max-width: 100%;">
+
+                    <input type="hidden" id="msg" name="msg" value="">
+
+                    <UMA-META>
+
+                    <LISTAR-METAS>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+
+    <div id="modal-aporte" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-title"><i class="fa-solid fa-piggy-bank"></i> Realizar Aporte</h3>
+                <button id="modal-close" class="modal-close-btn" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-meta-info">
+                <p id="modal-meta-nome" class="modal-meta-nome"></p>
+                <span id="modal-meta-restante" class="modal-meta-restante"></span>
+            </div>
+            <div class="modal-form-group">
+                <label for="aporte-valor">Valor do Aporte (R$)</label>
+                <input type="number" id="aporte-valor" name="valor"
+                       min="0.01" step="any" placeholder="Ex: 150,00" autocomplete="off">
+                <div id="aporte-error" class="aporte-field-error"></div>
+                <div class="aporte-quick-btns">
+                    <button type="button" class="aporte-quick-btn" data-valor="10">+R$ 10</button>
+                    <button type="button" class="aporte-quick-btn" data-valor="50">+R$ 50</button>
+                    <button type="button" class="aporte-quick-btn" data-valor="100">+R$ 100</button>
+                    <button type="button" class="aporte-quick-btn" data-valor="500">+R$ 500</button>
+                    <button type="button" class="aporte-quick-btn" data-valor="1000">+R$ 1.000</button>
+                </div>
+            </div>
+            <button id="btn-confirmar-aporte" class="modal-btn-aporte">
+                <i class="fa-solid fa-circle-check"></i> CONFIRMAR APORTE
+            </button>
+        </div>
+    </div>
+
+    
+    <div id="toast-container" role="status" aria-live="polite"></div>
+
+    <script>
+   
+    document.querySelectorAll('.btn-menu').forEach(function(btn) {
+        btn.addEventListener('click', function() { window.location.href = this.getAttribute('value'); });
+    });
+    var mobileBtn = document.getElementById('mobile-menu-btn');
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', function() {
+            var sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+            var icon = this.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-xmark');
+        });
+    }
+    var logoutBtn = document.getElementById('LogOutBtn');
+    if (logoutBtn) { logoutBtn.addEventListener('click', function() { window.location.href = '/login'; }); }
+
+ 
+    function showToast(message, type) {
+        type = type || 'success';
+        var icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation' };
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.innerHTML = '<i class="fa-solid ' + (icons[type] || 'fa-circle-check') + ' toast-icon"></i><span>' + message + '</span>';
+        document.getElementById('toast-container').appendChild(toast);
+        requestAnimationFrame(function() { requestAnimationFrame(function() { toast.classList.add('show'); }); });
+        setTimeout(function() {
+            toast.classList.remove('show');
+            setTimeout(function() { toast.remove(); }, 320);
+        }, 4500);
+    }
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        var msgInput = document.getElementById('msg');
+        if (msgInput && msgInput.value.trim() !== '') {
+            var msg = msgInput.value.trim();
+            var isError = /erro|inv[aá]lid|n[aã]o (foi|encontr)|maior|negativo|prazo|futuro/i.test(msg);
+            showToast(msg, isError ? 'error' : 'success');
+        }
+    });
+
+ 
+    function setFieldError(input, msg) {
+        if (!input) return;
+        input.classList.add('input-error');
+        var err = input.parentElement ? input.parentElement.querySelector('.field-error-msg') : null;
+        if (err) { err.textContent = msg; err.classList.add('visible'); }
+    }
+    function clearFieldError(input) {
+        if (!input) return;
+        input.classList.remove('input-error');
+        var err = input.parentElement ? input.parentElement.querySelector('.field-error-msg') : null;
+        if (err) { err.classList.remove('visible'); }
+    }
+
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (form.id !== 'data-form') return;
+
+        var nomeInput      = form.querySelector('[name="nome"]');
+        var totalInput     = form.querySelector('[name="valorTotal"]');
+        var alcancadoInput = form.querySelector('[name="valorAlcancado"]');
+        var prazoInput     = form.querySelector('[name="dataPrazo"]');
+        var hasError = false;
+
+        [nomeInput, totalInput, alcancadoInput, prazoInput].forEach(function(el) { clearFieldError(el); });
+
+        if (nomeInput && nomeInput.value.trim() === '') {
+            setFieldError(nomeInput, 'O nome da meta é obrigatório.');
+            hasError = true;
+        }
+
+        var totalVal = parseFloat(totalInput ? totalInput.value : '');
+        if (isNaN(totalVal) || totalInput.value.trim() === '') {
+            setFieldError(totalInput, 'Digite um número válido.');
+            hasError = true;
+        } else if (totalVal <= 0) {
+            setFieldError(totalInput, 'O valor total deve ser maior que zero.');
+            hasError = true;
+        }
+
+        var alcancadoVal = parseFloat(alcancadoInput ? alcancadoInput.value : '');
+        if (isNaN(alcancadoVal) || alcancadoInput.value.trim() === '') {
+            setFieldError(alcancadoInput, 'Digite um número válido.');
+            hasError = true;
+        } else if (alcancadoVal < 0) {
+            setFieldError(alcancadoInput, 'O valor não pode ser negativo.');
+            hasError = true;
+        } else if (!isNaN(totalVal) && alcancadoVal > totalVal) {
+            setFieldError(alcancadoInput, 'Não pode ser maior que o Valor Total.');
+            hasError = true;
+        }
+
+        if (prazoInput) {
+            if (!prazoInput.value) {
+                setFieldError(prazoInput, 'Selecione uma data de prazo.');
+                hasError = true;
+            } else {
+                var hoje = new Date(); hoje.setHours(0,0,0,0);
+                var prazo = new Date(prazoInput.value + 'T00:00:00');
+                if (prazo <= hoje) {
+                    setFieldError(prazoInput, 'O prazo deve ser uma data futura (após hoje).');
+                    hasError = true;
+                }
+            }
+        }
+
+        if (hasError) {
+            e.preventDefault();
+            showToast('Corrija os erros antes de salvar.', 'error');
+        }
+    });
+
+  
+    document.addEventListener('input', function(e) {
+        var name = e.target.name;
+        if (name === 'valorAlcancado') {
+            var totalInput = document.querySelector('[name="valorTotal"]');
+            if (totalInput) {
+                var t = parseFloat(totalInput.value), a = parseFloat(e.target.value);
+                if (!isNaN(t) && !isNaN(a) && a > t) e.target.classList.add('input-error');
+                else e.target.classList.remove('input-error');
+            }
+        }
+        if (name === 'valorTotal' || name === 'valorAlcancado') {
+            var v = parseFloat(e.target.value);
+            if (e.target.value !== '' && (isNaN(v) || v < 0)) e.target.classList.add('input-error');
+        }
+    });
+
+ 
+    var searchInput = document.getElementById('search-metas');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            var q = this.value.toLowerCase().trim();
+            document.querySelectorAll('#list-container .list-item').forEach(function(item) {
+                var nome = (item.querySelector('h3') || {}).textContent || '';
+                item.style.display = (!q || nome.toLowerCase().includes(q)) ? '' : 'none';
+            });
+        });
+    }
+
+
+    var modalEl       = document.getElementById('modal-aporte');
+    var modalCloseBtn = document.getElementById('modal-close');
+    var btnConfirmar  = document.getElementById('btn-confirmar-aporte');
+    var aporteInput   = document.getElementById('aporte-valor');
+    var aporteError   = document.getElementById('aporte-error');
+    var currentId     = null;
+    var currentMax    = 0;
+
+    function openAporte(id, nome, total, alcancado) {
+        currentId  = id;
+        currentMax = Math.round((total - alcancado) * 100) / 100;
+
+        document.getElementById('modal-meta-nome').textContent     = nome;
+        document.getElementById('modal-meta-restante').textContent =
+            'Falta para concluir: R$ ' + currentMax.toFixed(2).replace('.', ',');
+
+        aporteInput.value = '';
+        aporteInput.max   = currentMax;
+        aporteError.textContent = '';
+        aporteInput.classList.remove('input-error');
+
+        document.querySelectorAll('.aporte-quick-btn').forEach(function(btn) {
+            btn.disabled = parseFloat(btn.dataset.valor) > currentMax;
+        });
+
+        btnConfirmar.disabled = false;
+        btnConfirmar.innerHTML = '<i class="fa-solid fa-circle-check"></i> CONFIRMAR APORTE';
+
+        modalEl.style.display = 'flex';
+        setTimeout(function() { aporteInput.focus(); }, 100);
+    }
+
+    function closeAporte() { modalEl.style.display = 'none'; currentId = null; }
+
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeAporte);
+    if (modalEl) modalEl.addEventListener('click', function(e) { if (e.target === modalEl) closeAporte(); });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalEl && modalEl.style.display !== 'none') closeAporte();
+    });
+
+
+    document.querySelectorAll('.aporte-quick-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var add  = parseFloat(this.dataset.valor);
+            var curr = parseFloat(aporteInput.value) || 0;
+            var novo = Math.round((curr + add) * 100) / 100;
+            if (novo > currentMax) novo = currentMax;
+            aporteInput.value = novo;
+            aporteInput.classList.remove('input-error');
+            aporteError.textContent = '';
+        });
+    });
+
+
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn-aporte');
+        if (!btn) return;
+        openAporte(btn.dataset.id, btn.dataset.nome, parseFloat(btn.dataset.total), parseFloat(btn.dataset.alcancado));
+    });
+
+
+	if (btnConfirmar) {
+	        btnConfirmar.addEventListener('click', function() {
+	            var rawVal = aporteInput.value.trim(); // Pega o valor
+	            aporteError.textContent = '';
+	            aporteInput.classList.remove('input-error');
+
+	            if (rawVal === '' || isNaN(parseFloat(rawVal))) {
+	                aporteError.textContent = 'Digite um valor numérico válido (ex: 150).';
+	                aporteInput.classList.add('input-error');
+	                aporteInput.focus(); return;
+	            }
+	            var valor = parseFloat(rawVal);
+	            
+	            if (valor <= 0) {
+	                aporteError.textContent = 'O valor do aporte deve ser maior que zero.';
+	                aporteInput.classList.add('input-error');
+	                aporteInput.focus(); return;
+	            }
+	            
+	            if (valor > currentMax) {
+	                aporteError.textContent = 'O limite para aporte é de R$ ' + currentMax.toFixed(2).replace('.', ',') + ' para fechar a meta.';
+	                aporteInput.classList.add('input-error');
+	                aporteInput.focus(); return;
+	            }
+
+	            btnConfirmar.disabled = true;
+            btnConfirmar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+
+            $.ajax({
+                url: '/metas/aporte/' + currentId,
+                method: 'POST',
+                data: { valor: valor },
+                dataType: 'json'
+            }).done(function(data) {
+                closeAporte();
+                showToast(data.message, 'success');
+                setTimeout(function() { window.location.href = '/metas'; }, 1500);
+            }).fail(function(xhr) {
+                var msg = 'Erro ao realizar aporte.';
+                try { msg = JSON.parse(xhr.responseText).message || msg; } catch(ex) {}
+                aporteError.textContent = msg;
+                aporteInput.classList.add('input-error');
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '<i class="fa-solid fa-circle-check"></i> CONFIRMAR APORTE';
+            });
+        });
+    }
+    </script>
+
+</body>
+</html>

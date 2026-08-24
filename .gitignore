@@ -1,0 +1,19 @@
+# Build
+target/
+bin/
+*.class
+
+# Segredos — nunca versionar
+.env
+
+# IDE (mantemos .project e .classpath para importar direto no Eclipse)
+.settings/
+.metadata/
+.idea/
+*.iml
+*.launch
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store

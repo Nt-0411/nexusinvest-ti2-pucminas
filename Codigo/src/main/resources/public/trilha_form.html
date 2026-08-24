@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Tutoriais | Nexus Invest</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="/global.js"></script>
+
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .tutorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .tutorial-card {
+            background-color: #1F2937;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #4B5563;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .tutorial-card:hover {
+            transform: translateY(-2px);
+            border-color: #2563EB;
+        }
+        .video-wrapper img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            display: block;
+        }
+        .video-wrapper { display: block; overflow: hidden; }
+        .card-content { padding: 12px; }
+        .card-categoria {
+            font-size: 11px;
+            color: #2563EB;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .card-titulo { font-size: 14px; margin: 6px 0; color: white; }
+        .card-descricao { font-size: 12px; color: #9CA3AF; }
+        .card-footer {
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #4B5563;
+        }
+        .card-duracao { font-size: 12px; color: #9CA3AF; }
+        .assistir-btn {
+            background-color: #2563EB;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .assistir-btn:hover { background-color: #1d4ed8; }
+    </style>
+</head>
+<body class="layout-dashboard">
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="logo-area">
+    <div class="logo-group">
+        <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+    </div>
+</div>
+
+        <nav class="menu">
+            <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+            <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+            <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+            <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+            <button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+            <button class="btn-menu active" value="/videos"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+        </nav>
+
+        <div class="menu-footer">
+            <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+            <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-welcome">
+                <h2>Tutoriais</h2>
+                <span class="breadcrumbs">Home / Educação Financeira</span>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="input-search" placeholder="Pesquisar tutoriais...">
+            </div>
+
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="name">Carregando...</span>
+                        <span class="role">...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="tutorial-grid" id="tutorial-grid-container">
+                <CARDS-VIDEOS>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="/videos.js"></script>
+
+</body>
+</html>

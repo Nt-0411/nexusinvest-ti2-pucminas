@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação | Nexus Invest</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+    <script src="/config.js"></script>
+    <script src="/Graphics.js"></script>
+    <script src="/ManagerGraphicActives.js"></script>
+    <script src="/global.js"></script>
+</head>
+
+<body class="layout-dashboard">
+<div class="app-container">
+
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <div class="logo-group">
+                <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+            </div>
+            <button id="mobile-menu-btn" class="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+		<nav class="menu">
+		    <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+		    <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+		    <button class="active" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+		    <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+		    <button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+		    <button class="btn-menu" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+		</nav>
+
+		<div class="menu-footer">
+		    <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+		    <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+		</div>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="top-bar">
+            <div class="header-welcome">
+                <h2>Simulação</h2>
+                <span class="breadcrumbs">Home / Simulação</span>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Pesquisar ativo...">
+            </div>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="name">Usuário</span>
+                        <span class="role">Investidor</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <div class="simulation-grid">
+            
+            <div class="center-panel">
+                <div class="filters-row">
+                    <div class="filter-card">
+                        <label>Tipo de fundo</label>
+                        <select id="filter_estate_fund">
+                            <option value="stock">Ações</option>
+                            <option value="fund">Fundos</option>
+                            <option selected value="bdr">BDRs</option>
+                        </select>
+                    </div>
+                    <div class="filter-card">
+                        <label>Setor</label>
+                        <select id="filter_sector">
+                            <option value="Retail Trade">Comércio Varejista</option>
+                            <option value="Energy Minerals">Energia e Minerais</option>
+                            <option value="Health Services">Serviços de Saúde</option>
+                            <option value="Utilities">Serviços Públicos</option>
+                            <option selected value="Finance">Financeiro</option>
+                            <option value="Consumer Services">Serviços ao Consumidor</option>
+                            <option value="Consumer Non-Durables">Bens de Consumo Não Duráveis</option>
+                            <option value="Non-Energy Minerals">Minerais Não Energéticos</option>
+                            <option value="Commercial Services">Serviços Comerciais</option>
+                            <option value="Distribution Services">Serviços de Distribuição</option>
+                            <option value="Transportation">Transporte</option>
+                            <option value="Technology Services">Serviços de Tecnologia</option>
+                            <option value="Process Industries">Indústrias de Processos</option>
+                            <option value="Communications">Comunicações</option>
+                            <option value="Producer Manufacturing">Manufatura de Produtos</option>
+                            <option value="Miscellaneous">Diversos</option>
+                            <option value="Electronic Technology">Tecnologia Eletrônica</option>
+                            <option value="Industrial Services">Serviços Industriais</option>
+                            <option value="Health Technology">Tecnologia em Saúde</option>
+                            <option value="Consumer Durables">Bens de Consumo Duráveis</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <div class="graphic-container"></div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="watchlist-container">
+                    <div class="watchlist-content"></div>
+                </div>
+            </div>
+            
+        </div>
+
+
+        <CARTEIRA-SIMULADA>
+
+    </main>
+</div>
+
+<script>
+
+// Token entregue pela rota /config.js, fora do codigo-fonte
+const BRAPI_TOKEN = (window.NEXUS_CONFIG && window.NEXUS_CONFIG.brapiToken) || '';
+
+
+async function fetchCotacaoAtual(ticker) {
+    try {
+        const url = `https://brapi.dev/api/quote/${ticker}?token=${BRAPI_TOKEN}`;
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${BRAPI_TOKEN}` }
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        const result = data.results && data.results[0];
+        if (!result) return null;
+        return {
+            preco:    result.regularMarketPrice,
+            variacao: result.regularMarketChangePercent,
+            nome:     result.longName || result.shortName || ticker
+        };
+    } catch (e) {
+        console.error('fetchCotacaoAtual erro:', e);
+        return null;
+    }
+}
+
+async function syncTickerToCompra(acronym, name, tipo) {
+    const inputTicker = document.getElementById('inputTickerCompra');
+    const inputNome   = document.getElementById('inputNomeCompra');
+    const inputPreco  = document.getElementById('inputPrecoCompra');
+    const inputTipoEl = document.getElementById('inputTipoCompra');
+    const badge       = document.getElementById('sim-cotacao-badge');
+    const badgeValor  = document.getElementById('sim-cotacao-valor');
+    const badgeVar    = document.getElementById('sim-cotacao-variacao');
+    const btnComprar  = document.getElementById('btnComprar');
+
+    if (!inputTicker) return;
+
+    inputTicker.value = acronym;
+    inputNome.value   = name || '';
+    if (inputTipoEl && tipo) inputTipoEl.value = tipo;
+
+    if (btnComprar) btnComprar.disabled = true;
+    inputPreco.value = '';
+    inputPreco.placeholder = 'Buscando cotação...';
+    if (badge) badge.style.display = 'none';
+
+    const cotacao = await fetchCotacaoAtual(acronym);
+
+    if (cotacao) {
+        inputPreco.value = cotacao.preco.toFixed(4);
+
+        if (badge && badgeValor) {
+            badge.style.display = 'flex';
+            badgeValor.textContent = 'R$ ' + cotacao.preco.toFixed(4);
+
+            if (badgeVar) {
+                const v = cotacao.variacao;
+                badgeVar.textContent = (v >= 0 ? '▲ +' : '▼ ') + v.toFixed(2) + '%';
+                badgeVar.className = 'sim-cotacao-var ' + (v >= 0 ? 'positivo' : 'negativo');
+            }
+        }
+
+        atualizarCustoTotal();
+
+        if (btnComprar) btnComprar.disabled = false;
+    } else {
+        inputPreco.placeholder = 'Cotação indisponível';
+        if (badge) badge.style.display = 'none';
+    }
+}
+
+function atualizarCustoTotal() {
+    const qtdEl   = document.getElementById('inputQtdCompra');
+    const precoEl = document.getElementById('inputPrecoCompra');
+    const custoEl = document.getElementById('sim-custo-total');
+    if (!qtdEl || !precoEl || !custoEl) return;
+
+    const qtd   = parseFloat(qtdEl.value) || 0;
+    const preco = parseFloat(precoEl.value) || 0;
+    if (qtd > 0 && preco > 0) {
+        custoEl.textContent = 'Custo total: R$ ' + (qtd * preco).toFixed(2);
+        custoEl.style.display = 'block';
+    } else {
+        custoEl.style.display = 'none';
+    }
+}
+
+
+async function atualizarPosicoesCarteira() {
+    const cards = document.querySelectorAll('.sim-posicao-card');
+    if (!cards.length) return;
+
+    let somaCompra  = 0;
+    let somaAtual   = 0;
+    let todosOk     = true;
+
+    for (const card of cards) {
+        const ticker      = card.dataset.ticket;
+        const precoCompra = parseFloat(card.dataset.precoCompra);
+        const quantidade  = parseInt(card.dataset.quantidade);
+
+        const elPrecoAtual  = card.querySelector('.sim-preco-atual');
+        const elValorAtual  = card.querySelector('.sim-valor-atual');
+        const elResultado   = card.querySelector('.sim-resultado');
+        const elVariacao    = card.querySelector('.sim-variacao');
+        const mercadoItems  = card.querySelectorAll('.sim-pos-mercado-item');
+
+        const cotacao = await fetchCotacaoAtual(ticker);
+
+        if (!cotacao) {
+            todosOk = false;
+            if (elPrecoAtual) elPrecoAtual.textContent = 'Erro';
+            if (elValorAtual) elValorAtual.textContent = 'Erro';
+            if (elResultado)  elResultado.textContent  = 'Erro';
+            if (elVariacao)   elVariacao.textContent   = 'Erro';
+            mercadoItems.forEach(el => el.classList.remove('loading'));
+            continue;
+        }
+
+        const precoAtual  = cotacao.preco;
+        const valorCompra = precoCompra * quantidade;
+        const valorAtual  = precoAtual  * quantidade;
+        const resultado   = valorAtual  - valorCompra;
+        const varPercent  = ((precoAtual - precoCompra) / precoCompra) * 100;
+
+        somaCompra += valorCompra;
+        somaAtual  += valorAtual;
+
+        const positivo = resultado >= 0;
+        const sinal    = positivo ? '+' : '';
+        const cls      = positivo ? 'positivo' : 'negativo';
+
+        if (elPrecoAtual) {
+            elPrecoAtual.textContent = 'R$ ' + precoAtual.toFixed(4);
+            elPrecoAtual.className = 'sim-preco-atual ' + cls;
+        }
+        if (elValorAtual) {
+            elValorAtual.textContent = 'R$ ' + valorAtual.toFixed(2);
+        }
+        if (elResultado) {
+            elResultado.textContent = sinal + 'R$ ' + Math.abs(resultado).toFixed(2);
+            elResultado.className = 'sim-resultado ' + cls;
+        }
+        if (elVariacao) {
+            elVariacao.textContent = sinal + varPercent.toFixed(2) + '%';
+            elVariacao.className = 'sim-variacao ' + cls;
+        }
+
+        // Remove classe de loading
+        mercadoItems.forEach(el => el.classList.remove('loading'));
+    }
+
+    // ── Resumo geral
+    if (todosOk && somaCompra > 0) {
+        const totalEl  = document.getElementById('sim-total-atual');
+        const resEl    = document.getElementById('sim-total-resultado');
+        const varEl    = document.getElementById('sim-total-variacao');
+
+        if (totalEl) totalEl.textContent = 'R$ ' + somaAtual.toFixed(2);
+
+        if (resEl) {
+            const res    = somaAtual - somaCompra;
+            const positivo = res >= 0;
+            resEl.textContent = (positivo ? '+' : '') + 'R$ ' + Math.abs(res).toFixed(2);
+            resEl.className = 'sim-resumo-val ' + (positivo ? 'positivo' : 'negativo');
+        }
+
+        if (varEl) {
+            const v = ((somaAtual - somaCompra) / somaCompra) * 100;
+            varEl.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+            varEl.className = 'sim-resumo-val ' + (v >= 0 ? 'positivo' : 'negativo');
+        }
+    }
+}
+
+
+	var actives = [];
+	var managerGraphic = new ManagerGraphicsActives();
+	
+	$(document).ready(function () {
+	
+
+	    $(document).on('input', '#inputQtdCompra', atualizarCustoTotal);
+	
+	    function setCallSimulation(active) {
+	        $('#inputValueTxt').off('keydown').keydown(function (e) {
+	            if (e.key === 'Enter') getSimulation(active);
+	        });
+	        $('#inputValueBtn').off('click').click(function () {
+	            getSimulation(active);
+	        });
+	    }
+	
+	    async function getSimulation(active) {
+	        let val = Number.parseFloat($('#inputValueTxt').val());
+	        $('.graphic-container').empty();
+	        $('.graphic-container').append(
+	            `<div class="title-active">
+	                <img src="${active.img_url}" onerror="this.src='https://via.placeholder.com/40'">
+	                <div class="description">
+	                    <strong>${active.acronym}</strong>
+	                    <p>${active.name || 'Nome não informado'}</p>
+	                </div>
+	            </div>`
+	        );
+	        $('.graphic-container').append(
+	            `<div class="input-value">
+	                <input type="text" id="inputValueTxt" placeholder="Valor em R$ a investir:">
+	                <button id="inputValueBtn" class="sim-btn sim-btn-primary" style="margin-top:8px">
+	                    <i class="fa-solid fa-chart-line"></i> Simular
+	                </button>
+	            </div>`
+	        );
+	        $('.graphic-container').append('<div class="loader"></div>');
+	
+	        let sel = await managerGraphic.searchSingleActive(val, active.id - 1);
+	        $('.loader').css('display', 'none');
+	        $('.graphic-container').append('<div class="chart-scroll-wrapper"><canvas id="chartCanvas"></canvas></div>');
+	        managerGraphic.drawGraphic(sel, $('#chartCanvas'));
+	        setCallSimulation(active);
+	
+	        await syncTickerToCompra(active.acronym, active.name, $('#filter_estate_fund').val());
+	    }
+	
+	    async function updateListActives(filterSearch) {
+	        $('.graphic-container').empty();
+	        $('.watchlist-content').empty();
+	
+	        actives = await managerGraphic.searchAllActivesSector(
+	            $('#filter_estate_fund').val(),
+	            $('#filter_sector').val()
+	        );
+	
+	        if (filterSearch) {
+	            actives = actives.filter(a =>
+	                a.acronym.toLowerCase().includes(filterSearch.toLowerCase()) ||
+	                (a.name && a.name.toLowerCase().includes(filterSearch.toLowerCase()))
+	            );
+	        }
+	
+	        $('.loader').css('display', 'none');
+	
+	        let idx = 1;
+	        for (let active of actives) {
+	            $('.watchlist-content').append(
+	                `<div class="asset-card" value="${idx}">
+	                    <img src="${active.img_url}" onerror="this.src='https://via.placeholder.com/32'">
+	                    <div class="asset-info">
+	                        <strong>${active.acronym}</strong>
+	                        <p>${active.name ? active.name.substring(0, 28) + '…' : 'Nome indisponível'}</p>
+	                    </div>
+	                 </div>`
+	            );
+	            idx++;
+	        }
+	
+	        Array.from(document.getElementsByClassName('asset-card')).forEach(btn => {
+	            const $btn = $(btn);
+	            $btn.click(async function () {
+	                $btn.css('backgroundColor', '#46494d');
+	                const a = actives[$btn.attr('value') - 1];
+	                $('.graphic-container').empty();
+	                $('.graphic-container').append(
+	                    `<div class="asset-card">
+	                        <img src="${a.img_url}" onerror="this.src='https://via.placeholder.com/32'">
+	                        <div class="asset-info">
+	                            <strong>${a.acronym}</strong>
+	                            <p>${a.name ? a.name.substring(0, 28) + '…' : 'Nome indisponível'}</p>
+	                        </div>
+	                     </div>`
+	                );
+	                $('.graphic-container').append(
+	                    `<div class="input-value">
+	                        <input type="text" id="inputValueTxt" placeholder="Valor em R$ a investir:">
+	                        <button id="inputValueBtn" class="sim-btn sim-btn-primary" style="margin-top:8px">
+	                            <i class="fa-solid fa-chart-line"></i> Simular
+	                        </button>
+	                     </div>`
+	                );
+	                setCallSimulation(a);
+	                await syncTickerToCompra(a.acronym, a.name, $('#filter_estate_fund').val());
+	            });
+	
+	            $btn.mouseleave(function () {
+	                $btn.css('backgroundColor', 'var(--input-bg)');
+	            });
+	        });
+	
+	        if (actives.length > 0) {
+	            const first = actives[0];
+	            $('.graphic-container').append(
+	                `<div class="asset-card">
+	                    <img src="${first.img_url}" onerror="this.src='https://via.placeholder.com/32'">
+	                    <div class="asset-info">
+	                        <strong>${first.acronym}</strong>
+	                        <p>${first.name ? first.name.substring(0, 28) + '…' : 'Nome indisponível'}</p>
+	                    </div>
+	                 </div>`
+	            );
+	            $('.graphic-container').append(
+	                `<div class="input-value">
+	                    <input type="text" id="inputValueTxt" placeholder="Valor em R$ a investir:">
+	                    <button id="inputValueBtn" class="sim-btn sim-btn-primary" style="margin-top:8px">
+	                        <i class="fa-solid fa-chart-line"></i> Simular
+	                    </button>
+	                 </div>`
+	            );
+	            setCallSimulation(first);
+	            await syncTickerToCompra(first.acronym, first.name, $('#filter_estate_fund').val());
+	        }
+	    }
+	
+	    updateListActives();
+	
+	    $('#searchInput').keyup(async function () { updateListActives($(this).val()); });
+	    $('#filter_estate_fund').change(async function () { updateListActives(); });
+	    $('#filter_sector').change(async function () { updateListActives(); });
+	
+	    
+	    atualizarPosicoesCarteira();
+	});
+
+
+	document.querySelectorAll('.btn-menu').forEach(function (btn) {
+	    btn.addEventListener('click', function () {
+	        window.location.href = this.getAttribute('value');
+	    });
+	});
+	var mobileBtn = document.getElementById('mobile-menu-btn');
+	if (mobileBtn) {
+	    mobileBtn.addEventListener('click', function () {
+	        var sidebar = document.querySelector('.sidebar');
+	        sidebar.classList.toggle('active');
+	        var icon = this.querySelector('i');
+	        icon.classList.toggle('fa-bars');
+	        icon.classList.toggle('fa-xmark');
+	    });
+	}
+	var logoutBtn = document.getElementById('LogOutBtn');
+	if (logoutBtn) {
+	    logoutBtn.addEventListener('click', function () {
+            const hashSaveUser = md5('currentUser');
+            sessionStorage.removeItem(hashSaveUser);
+	        window.location.href = '/login';
+	    });
+	}
+	</script>
+
+</body>
+</html>

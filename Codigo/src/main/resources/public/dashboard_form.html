@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Invest - Dashboard</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/dashboard.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="/config.js"></script>
+    <script src="/Graphics.js"></script>
+    <script src="/ManagerGraphicActives.js"></script>
+    <script src="/global.js"></script>
+</head>
+<body>
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-group">
+                    <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+                </div>
+                <button id="mobile-menu-btn" class="mobile-menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="menu">
+                <button class="btn-menu active" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+<button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+<button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+<button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+<button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+<button class="btn-menu" value="/videos"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+            </nav>
+
+            <div class="menu-footer">
+                <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+                <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-welcome">
+                    <h2>Dashboard</h2>
+                    <span class="breadcrumbs">Home / Visão Geral</span>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="name">Usuário</span>
+                            <span class="role">Investidor</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="center-panel">
+                    <div class="filters-row">
+                        <div class="filter-card">
+                            <label>Tipo de busca</label>
+                            <select id="filter_value">
+                                <option value="volume">Maior interesse</option>
+                                <option selected value="change">Maior variação</option>
+                                <option value="close">Maior preço</option>
+                            </select>
+                        </div>
+                        <div class="filter-card">
+                            <label>Tipo de fundo</label>
+                            <select id="filter_estate_fund">
+                                <option value="stock">Ações</option>
+                                <option value="fund">Fundos</option>
+                                <option selected value="bdr">BDRs</option>
+                            </select>
+                        </div>
+                        <div class="filter-card">
+                            <label>Setor</label>
+                            <select id="filter_sector">
+                                <option value="Retail Trade">Comércio Varejista</option>
+                                <option value="Energy Minerals">Energia e Minerais</option>
+                                <option value="Health Services">Serviços de Saúde</option>
+                                <option value="Utilities">Serviços Públicos</option>
+                                <option selected value="Finance">Financeiro</option>
+                                <option value="Consumer Services">Serviços ao Consumidor</option>
+                                <option value="Consumer Non-Durables">Bens de Consumo Não Duráveis</option>
+                                <option value="Non-Energy Minerals">Minerais Não Energéticos</option>
+                                <option value="Commercial Services">Serviços Comerciais</option>
+                                <option value="Distribution Services">Serviços de Distribuição</option>
+                                <option value="Transportation">Transporte</option>
+                                <option value="Technology Services">Serviços de Tecnologia</option>
+                                <option value="Process Industries">Indústrias de Processos</option>
+                                <option value="Communications">Comunicações</option>
+                                <option value="Producer Manufacturing">Manufatura de Produtos</option>
+                                <option value="Miscellaneous">Diversos</option>
+                                <option value="Electronic Technology">Tecnologia Eletrônica</option>
+                                <option value="Industrial Services">Serviços Industriais</option>
+                                <option value="Health Technology">Tecnologia em Saúde</option>
+                                <option value="Consumer Durables">Bens de Consumo Duráveis</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="graphic-container"></div>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <div class="watchlist-container">
+                        <h3>Lista de Observação</h3>
+                        <div class="watchlist-content"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/dashboard.js"></script>
+</body>
+</html>

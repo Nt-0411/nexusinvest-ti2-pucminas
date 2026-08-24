@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações | Nexus Invest</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="/global.js"></script>
+	
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+	    const API_URL_USERS = 'http://localhost:6789/usuario';
+
+	    const hashSaveUser = md5('currentUser');
+	    const sessionData = sessionStorage.getItem(hashSaveUser);
+	    
+	    if (!sessionData) {
+	        alert("Sessão expirada. Faça login novamente.");
+	        window.location.href = "/login";
+	        return;
+	    }
+
+	    const user = JSON.parse(sessionData);
+	    const userId = user.idUsuario;
+
+	    const fotoPerfil = (user.foto && user.foto.trim() !== "") ? user.foto : "assets/images/user_icon.png";
+
+	    $('.user-info .name').text(user.nome);
+	    $('.user-info .role').text("Investidor");
+	    
+	    const userProfileDiv = document.querySelector('.user-profile');
+	    if (userProfileDiv && !userProfileDiv.querySelector('img')) {
+	        userProfileDiv.innerHTML += `<img src="${fotoPerfil}" alt="Avatar">`;
+	    }
+
+	    $('#settings_id').val(userId);
+	    $('#settings_nome').val(user.nome);
+	    $('#settings_email').val(user.email);
+	    $('#settings_login').val(user.login);
+	    $('#preview_settings_foto').attr('src', fotoPerfil);
+	    
+	    const nomesPerfis = { 1: "Conservador", 2: "Moderado", 3: "Arrojado" };
+	    const nomePerfilAtual = nomesPerfis[user.idPerfil] || "Não definido";
+	    $('#investor_profile_display').text(nomePerfilAtual);
+
+	    $('#btn-retake-quiz').click(function () {
+	        window.location.href = '/quiz.html';
+	    });
+
+        // ==========================================
+	    // BOTAO SAIR CORRIGIDO PARA A HOME (/)
+        // ==========================================
+	    $('#LogOutBtn').click(function () { 
+	        sessionStorage.removeItem(hashSaveUser);
+            localStorage.removeItem('redirecionarAposLogin'); // Limpa também a trava da home
+	        window.location.href = '/'; 
+	    });
+
+	    $('#settings_foto_input').change(function (event) {
+	        const input = event.target;
+	        if (input.files && input.files[0]) {
+	            const reader = new FileReader();
+	            reader.onload = function (e) {
+	                $('#preview_settings_foto').attr('src', e.target.result);
+	            }
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	    });
+
+	    $('#form-profile').submit(async function (e) {
+	        e.preventDefault();
+	        const novoNome = $('#settings_nome').val();
+	        const novoEmail = $('#settings_email').val();
+	        const novaFoto = $('#preview_settings_foto').attr('src');
+
+	        try {
+	            const response = await fetch(`${API_URL_USERS}/${userId}`, {
+	                method: 'PATCH',
+	                headers: { 'Content-Type': 'application/json' },
+	                body: JSON.stringify({ nome: novoNome, email: novoEmail, foto: novaFoto })
+	            });
+
+	            if (!response.ok) throw new Error("Erro na API ao salvar perfil");
+
+	            user.nome = novoNome;
+	            user.email = novoEmail;
+	            user.foto = novaFoto;
+	            
+	            sessionStorage.setItem(hashSaveUser, JSON.stringify(user)); 
+
+	            alert("Perfil atualizado com sucesso!");
+	            location.reload();
+	        } catch (error) {
+	            console.error(error);
+	            alert("Erro ao atualizar perfil. Verifique o console.");
+	        }
+	    });
+
+	    $('#form-password').submit(async function (e) {
+	        e.preventDefault();
+	        const novaSenha = $('#new_password').val();
+	        const confirmaSenha = $('#confirm_password').val();
+
+	        if (novaSenha !== confirmaSenha) {
+	            alert("As senhas não coincidem.");
+	            return;
+	        }
+
+	        if (novaSenha.length < 3) {
+	            alert("A senha é muito curta. Use pelo menos 3 caracteres.");
+	            return;
+	        }
+
+	        try {
+	            const response = await fetch(`${API_URL_USERS}/${userId}`, {
+	                method: 'PATCH',
+	                headers: { 'Content-Type': 'application/json' },
+	                body: JSON.stringify({ senha: novaSenha }) 
+	            });
+
+	            if (!response.ok) throw new Error("Erro na API ao salvar senha");
+
+	            alert("Senha alterada com sucesso!");
+	            $('#form-password')[0].reset();
+	        } catch (error) {
+	            console.error(error);
+	            alert("Erro ao alterar senha.");
+	        }
+	    });
+
+        // ==========================================
+	    // EXCLUIR CONTA CORRIGIDO PARA A HOME (/)
+        // ==========================================
+	    $('#btn-delete-account').click(async function () {
+	        const confirmacao = confirm("Deseja EXCLUIR sua conta? Esta ação não pode ser desfeita.");
+	        if (confirmacao) {
+	            try {
+	                const response = await fetch(`${API_URL_USERS}/${userId}`, {
+	                    method: 'DELETE'
+	                });
+	                
+	                if (!response.ok) throw new Error("Erro ao excluir conta");
+
+	                alert("Conta excluída com sucesso.");
+	                sessionStorage.removeItem(hashSaveUser);
+                    localStorage.removeItem('redirecionarAposLogin');
+	                window.location.href = '/';
+	            } catch (error) {
+	                console.error(error);
+	                alert("Erro ao tentar excluir a conta.");
+	            }
+	        }
+	    });
+	});
+    </script>
+</head>
+
+<body class="layout-dashboard">
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-group">
+                    <i class="fa-solid fa-chart-simple"></i> NexusInvest
+                </div>
+
+                <button id="mobile-menu-btn" class="mobile-menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+			<nav class="menu">
+                <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+                <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+                <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+                <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+                <button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+                <button class="btn-menu" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+            </nav>
+
+            <div class="menu-footer">
+                <button class="active btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+                <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="header-welcome">
+                    <h2>Configurações</h2>
+                    <span class="breadcrumbs">Home / Minha Conta</span>
+                </div>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Pesquisar configurações...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="name">Carregando...</span>
+                            <span class="role">...</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content settings-wrapper">
+
+                <div class="settings-grid">
+
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-user-pen"></i> Editar Perfil</h3>
+                        </div>
+                        <form id="form-profile">
+                            <div class="photo-edit-area">
+                                <img id="preview_settings_foto" src="assets/images/user_icon.png" alt="Foto de Perfil">
+                                <label for="settings_foto_input" class="btn-upload">
+                                    <i class="fa-solid fa-camera"></i> Alterar Foto
+                                </label>
+                                <input type="file" id="settings_foto_input" accept="image/*" style="display: none;">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="settings_nome" required class="input-dark">
+                            </div>
+
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" id="settings_email" required class="input-dark">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Usuário (Login)</label>
+                                <input type="text" id="settings_login" readonly class="input-dark readonly-input">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">Salvar Alterações</button>
+                        </form>
+                    </div>
+
+                    <div class="right-column-stack">
+
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-lock"></i> Segurança</h3>
+                            </div>
+                            <form id="form-password">
+                                <div class="form-group">
+                                    <label>Nova Senha</label>
+                                    <input type="password" id="new_password" required class="input-dark"
+                                        placeholder="Digite a nova senha">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirmar Senha</label>
+                                    <input type="password" id="confirm_password" required class="input-dark"
+                                        placeholder="Repita a nova senha">
+                                </div>
+                                <button type="submit" class="btn btn-secondary btn-full">Atualizar Senha</button>
+                            </form>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-pie"></i> Perfil de Investidor</h3>
+                            </div>
+                            <div class="investor-status">
+                                <p>Seu perfil atual é: <span class="badge-profile"
+                                        id="investor_profile_display">Carregando...</span></p>
+                                <p class="small-text">Mudou seus objetivos? Refaça o teste para atualizar nossas
+                                    recomendações.</p>
+                                <button type="button" id="btn-retake-quiz" class="btn btn-outline btn-full">Refazer
+                                    Quiz</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-card danger-zone">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-triangle-exclamation"></i> Zona de Perigo</h3>
+                            </div>
+                            <p class="small-text">Ao excluir sua conta, todos os seus dados, metas e simulações serão
+                                perdidos permanentemente.</p>
+                            <button type="button" id="btn-delete-account" class="btn btn-danger btn-full">Excluir Minha
+                                Conta</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+	<script>
+        document.querySelectorAll('.btn-menu').forEach(function(btn) {
+            btn.addEventListener('click', function() { 
+                window.location.href = this.getAttribute('value'); 
+            });
+        });
+
+        var mobileBtn = document.getElementById('mobile-menu-btn');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', function() {
+                var sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+                var icon = this.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-xmark');
+            });
+        }
+    </script>
+	
+</body>
+
+</html>

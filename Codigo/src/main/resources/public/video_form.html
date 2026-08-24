@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistir Tutorial | Nexus Invest</title>
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="/global.js"></script>
+</head>
+<body class="layout-dashboard">
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="logo-area">
+            <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+        </div>
+        
+        <nav class="menu">
+            <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+            <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+            <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+            <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+            <button class="btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+            <button class="btn-menu active" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+        </nav>
+        <div class="menu-footer">
+            <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+            <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="header-welcome">
+                <h2>Tutoriais</h2>
+                <span class="breadcrumbs"><a href="/tutorials" style="color: inherit; text-decoration: none;">Tutoriais</a> / Detalhes</span>
+            </div>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="name">Carregando...</span>
+                        <span class="role">...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content" style="padding-top: 1rem;">
+            <div class="video-detail-container" style="background-color: var(--card-dark, #1F2937); padding: 2rem; border-radius: 12px; border: 1px solid var(--input-border, #4B5563); max-width: 900px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000;">
+                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                            src="https://www.youtube.com/embed/<VIDEO-URL>"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <span style="background: var(--primary-blue, #2563EB); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500;"><VIDEO-CATEGORIA></span>
+                    
+                    <h3 style="margin: 15px 0 10px 0; font-size: 1.5rem; color: var(--text-light, #ffffff); font-weight: 600;"><VIDEO-TITULO></h3>
+                    
+                    <p style="color: var(--text-gray, #9CA3AF); line-height: 1.6; margin-bottom: 25px;"><VIDEO-DESCRICAO></p>
+                    
+                    <a href="/tutorials" class="btn-menu" style="display: inline-block; background-color: var(--input-bg, #374151); color: var(--text-light, #ffffff); border: 1px solid var(--input-border, #4B5563); padding: 10px 20px; border-radius: 8px; cursor: pointer; text-decoration: none; width: fit-content;">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para Lista
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.btn-menu').forEach(function(btn) {
+            btn.addEventListener('click', function(e) { 
+                // Se for um botão com a classe btn-menu, pega o value ou o href
+                const url = this.getAttribute('value') || this.getAttribute('href');
+                if(url && url !== '#') {
+                    e.preventDefault();
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+</script>
+
+<script src="/video-detalhe.js"></script>
+</body>
+</html>

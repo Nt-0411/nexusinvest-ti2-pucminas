@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Invest - Investimentos</title>
+    <link rel="stylesheet" href="HomePageStyle.css"> 
+    <link rel="shortcut icon" href="assets/images/icon.svg" id="icon-style" type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a class="logo" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#2563eb" d="M256 144C256 117.5 277.5 96 304 96L336 96C362.5 96 384 117.5 384 144L384 496C384 522.5 362.5 544 336 544L304 544C277.5 544 256 522.5 256 496L256 144zM64 336C64 309.5 85.5 288 112 288L144 288C170.5 288 192 309.5 192 336L192 496C192 522.5 170.5 544 144 544L112 544C85.5 544 64 522.5 64 496L64 336zM496 160L528 160C554.5 160 576 181.5 576 208L576 496C576 522.5 554.5 544 528 544L496 544C469.5 544 448 522.5 448 496L448 208C448 181.5 469.5 160 496 160z"/></svg>
+                <div class="logo-text">
+                    <span>Nexus Invest</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a class="link-conta" href="/login">Login</a>
+                <a class="login-link" href="/login">Sign Up</a>
+            </div>
+        </nav>
+        
+        <main class="hero-content">
+            <h1>Educação e finanças: <br> Aprendizado e Investimentos</h1>
+            <p>Participe do Nexus Invest, educação e aprendizado de qualidade, um ambiente seguro e intuitivo para você aprender a investir com confiança.</p>
+            <a href="/login"> <button class="cta-button">Comece Agora</button> </a>
+        </main>
+    </header>
+
+    <section class="services-carousel">
+        <h2>Nossas Ferramentas</h2>
+        
+        <div class="carousel-container">
+            <button class="carousel-arrow left-arrow" aria-label="Anterior">‹</button>
+            
+            <div id="service-cards-container" class="cards-wrapper">
+                
+                <div class="card-servico" data-link="/simulation">
+                    <img src="assets/images/grafico-de-barras.png" alt="Simulador">
+                    <h3>Simulador de Renda</h3>
+                    <p>Use nossa ferramenta para projetar seus ganhos futuros e planejar sua aposentadoria.</p>
+                    <button class="btn-detalhes">Detalhes</button>
+                </div>
+
+                <div class="card-servico" data-link="/dashboard">
+                    <img src="assets/images/performance.png" alt="Rastreio">
+                    <h3>Rastreio de Ativos</h3>
+                    <p>Monitore suas ações e fundos em tempo real com alertas personalizados e relatórios.</p>
+                    <button class="btn-detalhes">Detalhes</button>
+                </div>
+
+                <div class="card-servico" data-link="/noticias">
+                    <img src="assets/images/news.png" alt="Notícias">
+                    <h3>Notícias</h3>
+                    <p>Nossa plataforma atualiza as Notícias mais quentes do mercado.</p>
+                    <button class="btn-detalhes">Detalhes</button>
+                </div>
+
+                <div class="card-servico" data-link="/tutorials">
+                    <img src="assets/images/online-course.png" alt="Cursos">
+                    <h3>Cursos Financeiros</h3>
+                    <p>Nossa plataforma de educação do básico ao avançado para qualquer nível de investidor.</p>
+                    <button class="btn-detalhes">Detalhes</button>
+                </div>
+
+            </div>
+
+            <button class="carousel-arrow right-arrow" aria-label="Próximo">›</button>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <h2>O Que Nossos Clientes Dizem</h2>
+
+        <div class="testimonials-container">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"O aprendizado e as ferramentas da Nexus Invest transformaram minha abordagem a investimentos. Resultados incríveis e suporte de primeira!"</p>
+                <div class="client-profile">
+                    <img src="assets/images/av3.jpg" alt="Foto de João Silva" class="client-avatar">
+                    <div class="client-info">
+                        <h4>João Silva</h4>
+                        <span>Investidor Iniciante</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Nunca pensei que o mundo das finanças fosse tão acessível. O conteúdo é claro e direto ao ponto. Recomendo!"</p>
+                <div class="client-profile">
+                    <img src="assets/images/av2.jpg" alt="Foto de Maria Santos" class="client-avatar">
+                    <div class="client-info">
+                        <h4>Maria Santos</h4>
+                        <span>Profissional Liberal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"A melhor plataforma de educação financeira que encontrei. Minhas decisões de investimento estão muito mais sólidas agora."</p>
+                <div class="client-profile">
+                    <img src="assets/images/av1.jpg" alt="Foto de Pedro Alves" class="client-avatar">
+                    <div class="client-info">
+                        <h4>Pedro Alves</h4>
+                        <span>Gerente Financeiro</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col footer-contact">
+                <h3> Nexus Invest</h3>
+                <p>Seu parceiro de confiança nas finanças modernas. Receba ferramentas e informações exclusivas para alcançar seus objetivos financeiros a tempo.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Empresa</h3>
+                <ul>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Suporte</h3>
+                <ul>
+                    <li><a href="#">Central de Ajuda</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col footer-social">
+                <h3>Legal</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                    <a href="#" aria-label="Instagram">📸</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Nexus Invest. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="homepage.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fórum | Nexus Invest</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link rel="stylesheet" href="/style.css">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  
+  <script src="/assets/js/modulos/main.js"></script>
+  <script src="/assets/js/login.js"></script>
+  <script src="/global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+</head>
+
+<body class="layout-dashboard">
+	
+  <div class="app-container">
+
+    <aside class="sidebar">
+      <div class="logo-area">
+        <div class="logo-group">
+          <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+        </div>
+        <button id="mobile-menu-btn" class="mobile-menu-btn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="menu">
+        <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+        <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+        <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+        <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+        <button class="active btn-menu" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+        <button class="btn-menu" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+      </nav>
+
+      <div class="menu-footer">
+        <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+        <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="header-welcome">
+          <h2>Fórum de Discussão</h2>
+          <span class="breadcrumbs">Home / Fórum</span>
+        </div>
+
+        <div class="header-actions">
+          <div class="user-profile">
+            <div class="user-info">
+              <span class="name">Carregando...</span>
+              <span class="role">...</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="page-content">
+          <div class="detalhe-topico">
+              <input type="hidden" id="msg" name="msg" value="">
+              <UM-TOPICO>
+          </div>
+          
+        <div id="modal-mensagem" class="modal">
+          <div class="modal-content">
+            <h2>Nova Mensagem</h2>
+            <form id="form-mensagem">
+              <textarea id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
+              <div class="modal-buttons">
+                <button type="button" id="cancelar" class="btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn-criar">Criar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+	document.addEventListener("DOMContentLoaded", () => {
+	    // Pega a sessão do usuário
+	    const hashSaveUser = md5('currentUser');
+	    const sessionStr = sessionStorage.getItem(hashSaveUser);
+	    
+	    let user = null;
+	    if (sessionStr) {
+	        user = JSON.parse(sessionStr);
+	    }
+
+	    if (!user) {
+	        alert("Sessão expirada. Faça login novamente.");
+	        window.location.href = "/login";
+	        return;
+	    }
+
+        // Preencher o cabeçalho
+        const nameEl = document.querySelector('.user-info .name');
+        const roleEl = document.querySelector('.user-info .role');
+        const profileArea = document.querySelector('.user-profile');
+
+        if (nameEl) nameEl.textContent = user.nome;
+        if (roleEl) roleEl.textContent = user.perfil || "Investidor";
+
+        if (profileArea && !profileArea.querySelector('img')) {
+            const img = document.createElement('img');
+            img.src = (user.foto && user.foto.trim() !== "") ? user.foto : "/assets/images/user_icon.png";
+            img.alt = "Avatar";
+            profileArea.appendChild(img);
+        }
+
+        // Ativar navegação do Menu
+        document.querySelectorAll('.btn-menu').forEach(function(btn) {
+            btn.addEventListener('click', function() { window.location.href = this.getAttribute('value'); });
+        });
+
+        const logoutBtn = document.getElementById('LogOutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                sessionStorage.clear();
+                window.location.href = '/login';
+            });
+        }
+
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-xmark');
+            });
+        }
+
+        const listaComentarios = document.querySelectorAll('.comentario-card');
+        listaComentarios.forEach(card => {
+            const idAutor = parseInt(card.getAttribute('data-autor-id'));
+            
+           if (user.idUsuario !== idAutor) {
+                const botoes = card.querySelectorAll('.btn-acao-comentario');
+                botoes.forEach(b => b.style.display = 'none');
+            }
+        });
+
+        // Capturar e enviar o Comentário Novo
+        const modalMensagem = document.getElementById('modal-mensagem');
+        const formMensagem = document.getElementById('form-mensagem');
+        const btnCancelar = document.getElementById('cancelar');
+
+        if (btnCancelar) {
+            btnCancelar.addEventListener('click', () => { modalMensagem.style.display = 'none'; });
+        }
+
+        if (formMensagem) {
+            formMensagem.addEventListener('submit', async (e) => {
+                e.preventDefault(); 
+                
+                const idUsuario = user.idUsuario;
+                const conteudo = document.getElementById('conteudo').value;
+                const idTopico = window.location.pathname.replace(/\/$/, '').split('/').pop(); 
+
+                try {
+                    const response = await fetch(`/api/topico/${idTopico}/mensagem`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            idUsuario: parseInt(idUsuario),
+                            conteudo: conteudo
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.sucesso) {
+                        modalMensagem.style.display = 'none';
+                        window.location.reload(); 
+                    } else {
+                        alert("Erro no Java: " + (data.mensagem || "Desconhecido"));
+                    }
+                } catch (error) {
+                    console.error("Erro na requisição:", error);
+                    alert("Erro! O comentário não chegou ao servidor.");
+                }
+            });
+        }
+    });
+
+    window.editarComentario = async (idMensagem) => {
+        const novoConteudo = prompt("Edite sua mensagem:");
+        if (novoConteudo && novoConteudo.trim() !== "") {
+            try {
+                const response = await fetch(`/api/mensagem/${idMensagem}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ conteudo: novoConteudo })
+                });
+
+                const data = await response.json();
+                if (data.sucesso) {
+                    window.location.reload();
+                } else {
+                    alert("Erro ao editar: " + data.mensagem);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro de conexão ao tentar editar.");
+            }
+        }
+    };
+
+    window.excluirComentario = async (idMensagem) => {
+        if (confirm("Tem certeza que deseja excluir este comentário?")) {
+            try {
+                const response = await fetch(`/api/mensagem/${idMensagem}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.sucesso) {
+                    window.location.reload();
+                } else {
+                    alert("Erro ao excluir: " + data.mensagem);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro de conexão ao tentar excluir.");
+            }
+        }
+    };
+  </script>
+</body>
+</html>

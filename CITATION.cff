@@ -1,0 +1,27 @@
+cff-version: 1.0.1
+message: Please cite this software using these metadata.
+title: NexusInvest
+authors:
+  - family-names: Paula Gomides
+    given-names: Italo 
+  - family-names: Ferreira Dias
+    given-names: Kaio   
+  - family-names: Franca Santa Rita
+    given-names: Natan
+  - family-names: Sena Fernandes Cunha
+    given-names: Saulo
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: Oliveira Capanema
+    given-names: Daniel
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: Soares Gomes
+    given-names: Marco Paulo
+keywords:
+  - Invest
+  - Education
+repository-code: https://github.com/Nt-0411/nexusinvest-ti2-pucminas
+license: CC-BY-4.0
+version: 1.0.0
+date-released: 2026-06-12

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum | Nexus Invest</title>
+
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins:wght@400;500;600;700&display=swap' rel='stylesheet'>
+    <link href='https://cdn.boxicons.com/3.0.6/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link href='https://cdn.boxicons.com/3.0.6/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css">
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <script src="assets/js/modulos/main.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/forum.js"></script>
+    <script src="/global.js"></script>
+
+	<script>
+	    document.addEventListener("DOMContentLoaded", () => {
+	        const msgInput = document.getElementById('msg');
+	        if(msgInput && msgInput.value.trim() !== "") {
+	            alert(msgInput.value);
+	        }
+	    });
+	</script>
+</head>
+
+<body class="layout-dashboard">
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-group">
+                    <i class="fa-solid fa-chart-simple"></i> Nexus Invest
+                </div>
+
+                <button id="mobile-menu-btn" class="mobile-menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+
+			<nav class="menu">
+                <button class="btn-menu" value="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</button>
+                <button class="btn-menu" value="/noticias"><i class="fa-sharp-duotone fa-solid fa-newspaper"></i> Notícias</button>
+                <button class="btn-menu" value="/simulation"><i class="fa-solid fa-money-bill-transfer"></i> Simulações</button>
+                <button class="btn-menu" value="/metas"><i class="fa-solid fa-bullseye"></i> Metas</button>
+                <button class="active" value="/topico"><i class="fa-solid fa-message"></i> Fórum</button>
+                <button class="btn-menu" value="/tutorials"><i class="fa-solid fa-clapperboard"></i> Tutoriais</button>
+            </nav>
+
+            <div class="menu-footer">
+                <button class="btn-menu" value="/settings"><i class="fa-solid fa-gear"></i> Configurações</button>
+                <button id="LogOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
+            </div>
+        </aside>
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="header-welcome">
+                    <h2>Fórum de Discussão</h2>
+                    <span class="breadcrumbs">Home / Fórum</span>
+                </div>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Pesquisar...">
+                    <div id="search-results" class="search-results"></div>
+                </div>
+                
+
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="name">Carregando...</span>
+                            <span class="role">...</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+           
+
+
+            <div class="page-content">
+				<div class="forum">
+				    <input type="hidden" id="msg" name="msg" value="">
+
+				    <button id="btn-novo-topico" class="btn btn-novo-topico">Novo Tópico</button>
+
+				    <LISTAR-TOPICO>
+
+				    <FORM-MODAL-UPDATE>
+
+				    <div id="modal-topico" class="modal">
+				        <div class="modal-content">
+				            <h2>Novo Tópico</h2>
+				            <form id="form-topico" action="/topico/insert" method="post">
+								<input type="hidden" name="idUsuario" id="input-novo-topico-usuario-id">
+								<input type="text" name="titulo" id="titulo" placeholder="Título do tópico" required>
+				                <textarea name="conteudo" id="conteudo" placeholder="Digite sua pergunta..." required></textarea>
+				                <div class="modal-buttons">
+				                    <button type="button" id="cancelar" class="btn-cancelar">Cancelar</button>
+				                    <button type="submit" class="btn-criar">Criar</button>
+				                </div>
+				            </form>
+				        </div>
+				    </div>
+				</div>
+                </div>
+
+                <div id="modal-editar-topico" class="modal">
+                    <div class="modal-content">
+                        <h2>Editar Tópico</h2>
+
+                        <form id="form-editar-topico">
+                            <input type="text" id="editar-titulo" required>
+                            <textarea id="editar-conteudo" required></textarea>
+                            <div class="modal-buttons">
+                                <button type="button" id="cancelar-edicao" class="btn-cancelar">Cancelar</button>
+                                <button type="submit" class="btn-criar">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        </main>
+    </div>
+
+	<script>
+	   
+	    document.querySelectorAll('.btn-menu').forEach(function(btn) {
+	        btn.addEventListener('click', function() { window.location.href = this.getAttribute('value'); });
+	    });
+	    var mobileBtn = document.getElementById('mobile-menu-btn');
+	    if (mobileBtn) {
+	        mobileBtn.addEventListener('click', function() {
+	            var sidebar = document.querySelector('.sidebar');
+	            sidebar.classList.toggle('active');
+	            var icon = this.querySelector('i');
+	            icon.classList.toggle('fa-bars');
+	            icon.classList.toggle('fa-xmark');
+	        });
+	    }
+	    var logoutBtn = document.getElementById('LogOutBtn');
+	    if (logoutBtn) { logoutBtn.addEventListener('click', function() { window.location.href = '/login'; }); }
+
+		
+		document.addEventListener("DOMContentLoaded", () => {
+
+		    const btnNovoTopico = document.getElementById('btn-novo-topico');
+		    const modalTopico = document.getElementById('modal-topico');
+		    const btnCancelar = document.getElementById('cancelar');
+
+		    if (btnNovoTopico && modalTopico) {
+		        btnNovoTopico.addEventListener('click', () => {
+		            modalTopico.style.display = 'flex'; 
+		        });
+		    }
+
+		    if (btnCancelar && modalTopico) {
+		        btnCancelar.addEventListener('click', () => {
+		            modalTopico.style.display = 'none';
+		        });
+		    }
+
+		    window.addEventListener('click', (event) => {
+		        if (event.target === modalTopico) {
+		            modalTopico.style.display = 'none';
+		        }
+		    });
+		});
+		
+	    </script>
+    
+		<script>
+		document.addEventListener("DOMContentLoaded", () => {
+		    const hashSaveUser = md5('currentUser');
+		    const sessionStr = sessionStorage.getItem(hashSaveUser);
+		    
+		    if (sessionStr) {
+		        const user = JSON.parse(sessionStr);
+		        
+				const inputCriadorForm = document.getElementById('input-novo-topico-usuario-id');
+				        if (inputCriadorForm) {
+				            inputCriadorForm.value = user.idUsuario;
+				        }
+				
+		        const listaTopicos = document.querySelectorAll('.topicos');
+		        
+		        listaTopicos.forEach(topicoHtml => {
+		            const idAutor = parseInt(topicoHtml.getAttribute('data-autor-id'));
+		            
+		            if (user.idUsuario !== idAutor) {
+		                const botoesRestritos = topicoHtml.querySelectorAll('.btn-acao-restrita');
+		                botoesRestritos.forEach(btn => {
+		                    btn.style.display = 'none'; 
+		                });
+		            }
+		        });
+		    }
+		});
+		</script>
+</body>
+
+</html>
