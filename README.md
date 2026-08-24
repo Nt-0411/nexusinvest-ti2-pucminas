@@ -64,26 +64,28 @@ Aplicação Java em três camadas, servida por um servidor HTTP embarcado (Spark
 com front-end estático consumindo as rotas REST.
 
 ```mermaid
-flowchart LR
-    subgraph Cliente["🌐 Navegador"]
-        UI["HTML · CSS · JS<br/>Chart.js · jQuery"]
-    end
+flowchart TD
+    UI["🌐 Navegador<br/>HTML · CSS · JavaScript · Chart.js"]
 
-    subgraph Servidor["☕ Java · Spark 2.9.4 · porta 6789"]
-        R["Aplication.java<br/><i>rotas REST</i>"]
-        S["service/<br/><i>11 classes · regra de negócio</i>"]
-        D["DAO/<br/><i>11 classes · JDBC</i>"]
-        M["model/<br/><i>10 entidades</i>"]
+    subgraph Servidor["☕ Servidor Java · Spark 2.9.4 · porta 6789"]
+        direction TB
+        R["<b>Aplication.java</b><br/><i>rotas REST</i>"]
+        S["<b>service/</b><br/><i>11 classes · regra de negócio</i>"]
+        D["<b>DAO/</b><br/><i>11 classes · JDBC</i>"]
+        R --> S --> D
     end
 
     DB[("🐘 PostgreSQL<br/>11 tabelas")]
-    BRAPI["brapi.dev<br/><i>cotações B3</i>"]
-    NEWS["newsdata.io<br/><i>notícias</i>"]
-    AZURE["Azure AI<br/>Content Safety"]
 
-    UI -->|HTTP| R --> S --> D --> DB
-    S -.-> M
-    D -.-> M
+    subgraph Externas["🔌 APIs externas"]
+        direction LR
+        BRAPI["brapi.dev<br/><i>cotações B3</i>"]
+        NEWS["newsdata.io<br/><i>notícias</i>"]
+        AZURE["Azure AI<br/><i>Content Safety</i>"]
+    end
+
+    UI -->|HTTP| R
+    D --> DB
     UI -.->|cotações| BRAPI
     S -.->|sincroniza| NEWS
     S -.->|modera fórum| AZURE
